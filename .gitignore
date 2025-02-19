@@ -1,0 +1,13 @@
+# Node.js
+node_modules/
+npm-debug.log
+.env
+
+# Logs
+*.log
+
+# Frontend build (for OXATK/frontend/oxatk-frontend)
+frontend/oxatk-frontend/build/
+
+# Backend build (if any)
+backend/build/
