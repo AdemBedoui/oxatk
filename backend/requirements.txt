@@ -1,0 +1,6 @@
+Flask==2.3.2
+dnspython==2.4.2
+flask-cors==3.0.10
+socket
+dns.resolver
+re
