@@ -39,7 +39,7 @@ const App = () => {
     setError('');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/check-domain', { domain });
+      const response = await axios.post('https://dnstkapi.bedouiadem.tech/api/check-domain', { domain });
       setData(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to fetch domain information');
