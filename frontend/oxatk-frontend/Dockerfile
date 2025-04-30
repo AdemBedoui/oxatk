@@ -1,24 +1,27 @@
-# Stage 1: build
-FROM node:18-alpine AS builder
-WORKDIR /app
+# Étape 1 : build de votre app Vite  
+FROM node:18-alpine AS builder  
+WORKDIR /app  
+COPY package*.json ./  
+RUN npm ci  
+COPY . .  
+RUN npm run build  
 
-# copy package files and install deps
-COPY package*.json ./
-RUN npm ci
+# Étape 2 : servir via NGINX sur port custom  
+FROM nginx:stable-alpine  
 
-# copy source & build
-COPY . .
-RUN npm run build
+# 1. Définition du port configurable  
+ARG PORT=5000  
+ENV PORT=${PORT}  
 
-# Stage 2: serve
-FROM nginx:stable-alpine
-# remove default nginx content
-RUN rm -rf /usr/share/nginx/html/*
-# copy built assets
-COPY --from=builder /app/dist /usr/share/nginx/html
+# 2. Remplacement de la directive listen dans default.conf  
+RUN sed -i "s/listen 80;/listen ${PORT};/" /etc/nginx/conf.d/default.conf  
 
-# optional: copy a custom nginx.conf if you need push-state routing
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# 3. Nettoyage du dossier webroot et copie des assets  
+RUN rm -rf /usr/share/nginx/html/*  
+COPY --from=builder /app/dist /usr/share/nginx/html  
 
-EXPOSE 80
+# 4. Exposition du port interne  
+EXPOSE ${PORT}  
+
+# 5. Lancement de NGINX  
 CMD ["nginx", "-g", "daemon off;"]
